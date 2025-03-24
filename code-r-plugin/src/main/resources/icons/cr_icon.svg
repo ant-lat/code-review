@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="13px" height="13px" viewBox="0 0 13 13" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <!-- 将之前的内容缩放到13x13 -->
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle fill="#3592C4" cx="6.5" cy="6.5" r="6"/>
+        <path d="M4.5,9 L8.5,9 L8.5,8 L4.5,8 L4.5,9 Z M4.5,7 L8.5,7 L8.5,6 L4.5,6 L4.5,7 Z M4.5,5 L8.5,5 L8.5,4 L4.5,4 L4.5,5 Z" fill="#FFFFFF"/>
+    </g>
+</svg> 

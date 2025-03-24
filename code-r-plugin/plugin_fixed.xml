@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.ant.code.code-r-plugin</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>Code Review</name>
+
+    <!-- 插件版本号 -->
+    <version>1.0.0</version>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="support@codereview.org" url="https://www.codereview.org">Code Review Organization</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description><![CDATA[
+    This IntelliJ IDEA extension provides integration with the Code Review Platform to streamline the code review process within your IDE.
+    <p>The extension offers the following features:</p>
+    <ul>
+        <li>Authentication with the Code Review Platform</li>
+        <li>Browse and filter issues directly in IDE</li>
+        <li>Create code review issues from selected code</li>
+        <li>Update issue status and track review progress</li>
+        <li>Assign issues to team members</li>
+        <li>Add comments to existing issues</li>
+    </ul>
+    <p>Improve your team's code quality by integrating code reviews directly into your development workflow.</p>
+  ]]></description>
+
+    <!-- 插件变更说明，显示在插件市场的更新日志中 -->
+    <change-notes><![CDATA[
+    <h3>1.0.0</h3>
+    <ul>
+        <li>初始版本发布</li>
+        <li>支持代码审查基本功能</li>
+        <li>IDE内集成问题管理</li>
+        <li>支持登录代码审查平台</li>
+        <li>支持创建代码审查问题</li>
+    </ul>
+  ]]></change-notes>
+
+    <!-- 插件分类标签，用于在插件市场中更好地被找到 -->
+    <category>Code Quality Tools</category>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>Git4Idea</depends>
+    <depends>com.intellij.modules.java</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+
+        <!-- 服务 -->
+        <applicationService serviceImplementation="com.ant.code.coderplugin.api.ApiService"/>
+        <projectService serviceImplementation="com.ant.code.coderplugin.service.AuthService"/>
+        <projectService serviceImplementation="com.ant.code.coderplugin.service.IssueService"/>
+        <projectService serviceImplementation="com.ant.code.coderplugin.ProjectManager"/>
+
+        <!-- 应用级服务 -->
+        <applicationService serviceImplementation="com.ant.code.coderplugin.settings.CodeReviewSettings"/>
+        <applicationService serviceImplementation="com.ant.code.coderplugin.settings.AppSettingsState"/>
+
+        <!-- 工具窗口 -->
+        <toolWindow id="CodeReview" icon="/icons/cr_icon.svg" anchor="bottom"
+                    factoryClass="com.ant.code.coderplugin.toolwindow.IssueToolWindowFactory"/>
+
+        <!-- 设置 -->
+        <applicationConfigurable id="com.ant.code.coderplugin.settings.CodeReviewConfigurable"
+                                 displayName="代码检视平台设置"
+                                 instance="com.ant.code.coderplugin.settings.CodeReviewConfigurable"/>
+    </extensions>
+
+    <actions>
+        <!-- 登录操作 -->
+        <action id="CodeReview.Login"
+                class="com.ant.code.coderplugin.action.LoginAction"
+                text="登录代码检视平台"
+                description="登录代码检视平台">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+
+        <!-- 创建问题操作 -->
+        <action id="CodeReview.CreateIssue"
+                class="com.ant.code.coderplugin.action.CreateIssueAction"
+                text="创建代码检视问题"
+                description="从选中的代码创建代码检视问题">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift I"/>
+        </action>
+    </actions>
+
+</idea-plugin>

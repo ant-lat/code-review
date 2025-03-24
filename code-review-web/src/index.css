@@ -1,0 +1,289 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100vh;
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+
+.logo {
+  height: 32px;
+  margin: 16px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trigger {
+  padding: 0 24px;
+  font-size: 18px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.ant-layout-content {
+  margin: 24px 16px;
+  padding: 24px;
+  background: #fff;
+  min-height: 280px;
+}
+
+/* 登录页样式 */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a192f 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: 
+    radial-gradient(circle at center, rgba(29, 78, 216, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 60% 40%, rgba(124, 58, 237, 0.1) 0%, transparent 50%);
+  animation: rotate 30s linear infinite;
+}
+
+/* 科技网格背景 */
+.tech-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 15s linear infinite;
+}
+
+/* 浮动粒子 */
+.particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+}
+
+.particle:nth-child(1) { top: 20%; left: 20%; animation: float 6s infinite; }
+.particle:nth-child(2) { top: 60%; left: 80%; animation: float 8s infinite; }
+.particle:nth-child(3) { top: 80%; left: 40%; animation: float 7s infinite; }
+.particle:nth-child(4) { top: 40%; left: 60%; animation: float 9s infinite; }
+.particle:nth-child(5) { top: 30%; left: 70%; animation: float 5s infinite; }
+
+/* 科技线条 */
+.tech-lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.tech-line {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(29, 78, 216, 0.5), transparent);
+  animation: techLine 4s linear infinite;
+}
+
+.tech-line:nth-child(1) { top: 20%; width: 60%; left: -60%; animation-delay: 0s; }
+.tech-line:nth-child(2) { top: 40%; width: 40%; left: -40%; animation-delay: 1s; }
+.tech-line:nth-child(3) { top: 60%; width: 70%; left: -70%; animation-delay: 2s; }
+.tech-line:nth-child(4) { top: 80%; width: 50%; left: -50%; animation-delay: 3s; }
+
+/* 登录框样式优化 */
+.login-box {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  z-index: 1;
+  animation: boxFloat 3s ease-in-out infinite;
+}
+
+.login-title {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.login-title h1 {
+  color: #fff;
+  font-size: 32px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  text-shadow: 0 0 10px rgba(29, 78, 216, 0.5);
+}
+
+.login-title h1::before,
+.login-title h1::after {
+  content: attr(data-text);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.8;
+}
+
+.login-title h1::before {
+  animation: glitch 3s infinite;
+  color: #0ff;
+  clip: rect(24px, 550px, 90px, 0);
+}
+
+.login-title h1::after {
+  animation: glitch 2s infinite;
+  color: #f0f;
+  clip: rect(85px, 550px, 140px, 0);
+}
+
+.login-title p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+/* 输入框样式 */
+.login-form .ant-input-affix-wrapper {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+.login-form .ant-input {
+  background: transparent;
+  color: #fff;
+}
+
+.login-form .ant-input-password-icon {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.login-button {
+  height: 48px;
+  font-size: 16px;
+  background: linear-gradient(90deg, #1d4ed8 0%, #7c3aed 100%);
+  border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.login-button:hover::before {
+  left: 100%;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(29, 78, 216, 0.4);
+}
+
+/* 动画定义 */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes gridMove {
+  from { transform: translateY(0); }
+  to { transform: translateY(50px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes techLine {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(200%); }
+}
+
+@keyframes boxFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+/* 登录页页脚 */
+.login-footer {
+  position: absolute;
+  bottom: 24px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  width: 100%;
+  z-index: 1;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 12px;
+} 

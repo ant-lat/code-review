@@ -1,0 +1,187 @@
+/* 全局样式变量 */
+:root {
+  /* 主色调 */
+  --primary-color: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-active: #1d4ed8;
+  --primary-light: #dbeafe;
+  --primary-lighter: #eff6ff;
+
+  /* 文字颜色 */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --text-disabled: #cccccc;
+
+  /* 背景颜色 */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-header: #f0f5ff;
+
+  /* 边框颜色 */
+  --border-color: #f0f0f0;
+  --border-color-split: #e5edff;
+
+  /* 状态颜色 */
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --info-color: #3b82f6;
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+
+  /* 圆角 */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+}
+
+/* 全局通用样式 */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  line-height: 1.5;
+}
+
+/* 卡片全局样式 */
+.ant-card {
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.ant-card-head {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 16px;
+}
+
+.ant-card-head-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ant-card-body {
+  padding: 16px;
+}
+
+/* 表格全局样式 */
+.ant-table {
+  background: var(--bg-card);
+  border-radius: var(--border-radius-md);
+}
+
+.ant-table-thead > tr > th {
+  background-color: var(--bg-header);
+  color: var(--primary-active);
+  font-weight: 600;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color-split);
+}
+
+.ant-table-tbody > tr > td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  transition: all 0.3s;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background-color: var(--primary-lighter) !important;
+}
+
+.ant-table-tbody > tr:nth-child(even) {
+  background-color: var(--bg-secondary);
+}
+
+/* 标签样式 */
+.ant-tag {
+  border-radius: var(--border-radius-sm);
+  padding: 2px 8px;
+  font-weight: 500;
+  margin-right: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 按钮样式 */
+.ant-btn {
+  border-radius: var(--border-radius-md);
+  height: 34px;
+  box-shadow: var(--shadow-sm);
+}
+
+.ant-btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+/* 表单控件样式 */
+.ant-input,
+.ant-select .ant-select-selector,
+.ant-picker {
+  border-radius: var(--border-radius-sm);
+  border-color: var(--border-color);
+}
+
+.ant-input:hover,
+.ant-select:hover .ant-select-selector,
+.ant-picker:hover {
+  border-color: var(--primary-color);
+}
+
+.ant-input:focus,
+.ant-select-focused .ant-select-selector,
+.ant-picker-focused {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* 分页样式 */
+.ant-pagination-item {
+  border-radius: var(--border-radius-sm);
+  border-color: var(--border-color);
+}
+
+.ant-pagination-item-active {
+  border-color: var(--primary-color);
+}
+
+.ant-pagination-item-active a {
+  color: var(--primary-color);
+}
+
+/* 其他组件样式 */
+.ant-badge-status-dot {
+  width: 8px;
+  height: 8px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .ant-card-head {
+    padding: 12px;
+  }
+  
+  .ant-card-body {
+    padding: e12px;
+  }
+  
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 10px 8px;
+  }
+} 

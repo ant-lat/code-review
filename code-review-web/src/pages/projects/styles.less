@@ -1,0 +1,156 @@
+/* 项目列表页面样式 */
+.project-list-container {
+  padding: 16px;
+  background-color: #f8fafc;
+
+  .ant-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  
+    .ant-card-head {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 16px 24px;
+    
+      .ant-card-head-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+      }
+    }
+  
+    .ant-card-body {
+      padding: 20px;
+    }
+  }
+
+  /* 表格样式 */
+  .ant-table {
+    background: #fff;
+    border-radius: 8px;
+    
+    .ant-table-thead > tr > th {
+      background-color: #f0f5ff;
+      color: #1e40af;
+      font-weight: 600;
+      padding: 16px 12px;
+      border-bottom: 1px solid #e5edff;
+    }
+    
+    .ant-table-tbody > tr > td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      transition: all 0.3s;
+    }
+    
+    .ant-table-tbody > tr:hover > td {
+      background-color: #f5f9ff !important;
+    }
+    
+    .ant-table-tbody > tr:nth-child(even) {
+      background-color: #fafcff;
+    }
+    
+    .ant-table-row-selected > td {
+      background-color: #e6f4ff !important;
+    }
+  }
+
+  /* 标签样式 */
+  .ant-tag {
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-weight: 500;
+    margin-right: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  /* 按钮样式 */
+  .ant-btn {
+    border-radius: 6px;
+    height: 34px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    
+    &.ant-btn-primary {
+      background-color: #3b82f6;
+      border-color: #3b82f6;
+      
+      &:hover, &:focus {
+        background-color: #2563eb;
+        border-color: #2563eb;
+      }
+    }
+  }
+
+  /* 表单筛选区域 */
+  .filter-form {
+    margin-bottom: 16px;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    
+    .ant-form-item {
+      margin-bottom: 10px;
+    }
+    
+    .filter-buttons {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+      
+      .ant-btn {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  /* 操作列样式 */
+  .action-btns {
+    .ant-btn {
+      margin-right: 8px;
+      padding: 0 8px;
+      height: 30px;
+      
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  /* 分页样式 */
+  .ant-pagination {
+    margin-top: 16px;
+    
+    .ant-pagination-item {
+      border-radius: 4px;
+      
+      &-active {
+        border-color: #3b82f6;
+        
+        a {
+          color: #3b82f6;
+        }
+      }
+    }
+  }
+
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    padding: 10px;
+    
+    .ant-card-head {
+      padding: 12px 16px;
+    }
+    
+    .ant-card-body {
+      padding: 16px;
+    }
+    
+    .filter-form {
+      padding: 12px;
+    }
+  }
+} 

@@ -1,0 +1,92 @@
+<svg width="1440" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 渐变定义 -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a192f" />
+      <stop offset="100%" stop-color="#152a45" />
+    </linearGradient>
+    
+    <!-- 代码符号定义 -->
+    <symbol id="codeLine" viewBox="0 0 100 10">
+      <line x1="0" y1="5" x2="70" y2="5" stroke="rgba(100, 255, 218, 0.1)" stroke-width="2" />
+      <circle cx="80" cy="5" r="3" fill="rgba(100, 255, 218, 0.1)" />
+      <line x1="90" y1="2" x2="100" y2="8" stroke="rgba(100, 255, 218, 0.1)" stroke-width="2" />
+    </symbol>
+    
+    <!-- 节点连接图形 -->
+    <symbol id="connection" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="5" fill="rgba(255, 183, 100, 0.4)" />
+      <circle cx="100" cy="100" r="15" fill="none" stroke="rgba(100, 255, 218, 0.2)" stroke-width="1" />
+      <line x1="100" y1="100" x2="150" y2="150" stroke="rgba(100, 255, 218, 0.2)" stroke-width="1" />
+      <line x1="100" y1="100" x2="150" y2="50" stroke="rgba(100, 255, 218, 0.2)" stroke-width="1" />
+      <line x1="100" y1="100" x2="50" y2="150" stroke="rgba(100, 255, 218, 0.2)" stroke-width="1" />
+      <line x1="100" y1="100" x2="50" y2="50" stroke="rgba(100, 255, 218, 0.2)" stroke-width="1" />
+    </symbol>
+    
+    <!-- 编程括号 -->
+    <symbol id="braces" viewBox="0 0 100 100">
+      <path d="M20,10 C10,10 10,50 10,50 C10,70 20,90 20,90" fill="none" stroke="rgba(100, 255, 218, 0.2)" stroke-width="2" />
+      <path d="M80,10 C90,10 90,50 90,50 C90,70 80,90 80,90" fill="none" stroke="rgba(100, 255, 218, 0.2)" stroke-width="2" />
+    </symbol>
+  </defs>
+  
+  <!-- 背景渐变 -->
+  <rect width="100%" height="100%" fill="url(#bgGradient)" />
+  
+  <!-- 浮动粒子效果 -->
+  <g opacity="0.3">
+    <circle cx="200" cy="150" r="2" fill="#64ffda" />
+    <circle cx="400" cy="250" r="3" fill="#64ffda" />
+    <circle cx="600" cy="100" r="2" fill="#64ffda" />
+    <circle cx="800" cy="300" r="4" fill="#64ffda" />
+    <circle cx="1000" cy="200" r="2" fill="#64ffda" />
+    <circle cx="1200" cy="150" r="3" fill="#64ffda" />
+    <circle cx="300" cy="400" r="2" fill="#64ffda" />
+    <circle cx="500" cy="500" r="3" fill="#64ffda" />
+    <circle cx="700" cy="450" r="2" fill="#64ffda" />
+    <circle cx="900" cy="550" r="4" fill="#64ffda" />
+    <circle cx="1100" cy="400" r="2" fill="#64ffda" />
+    <circle cx="1300" cy="500" r="3" fill="#64ffda" />
+  </g>
+  
+  <!-- 技术网格线 -->
+  <g opacity="0.1">
+    <line x1="0" y1="100" x2="1440" y2="100" stroke="#64ffda" stroke-width="1" />
+    <line x1="0" y1="300" x2="1440" y2="300" stroke="#64ffda" stroke-width="1" />
+    <line x1="0" y1="500" x2="1440" y2="500" stroke="#64ffda" stroke-width="1" />
+    <line x1="0" y1="700" x2="1440" y2="700" stroke="#64ffda" stroke-width="1" />
+    
+    <line x1="200" y1="0" x2="200" y2="800" stroke="#64ffda" stroke-width="1" />
+    <line x1="600" y1="0" x2="600" y2="800" stroke="#64ffda" stroke-width="1" />
+    <line x1="1000" y1="0" x2="1000" y2="800" stroke="#64ffda" stroke-width="1" />
+    <line x1="1400" y1="0" x2="1400" y2="800" stroke="#64ffda" stroke-width="1" />
+  </g>
+  
+  <!-- 代码图形元素 -->
+  <use href="#codeLine" x="100" y="150" width="300" height="30" />
+  <use href="#codeLine" x="150" y="200" width="250" height="30" />
+  <use href="#codeLine" x="200" y="250" width="200" height="30" />
+  <use href="#codeLine" x="150" y="300" width="250" height="30" />
+  <use href="#codeLine" x="100" y="350" width="300" height="30" />
+  
+  <use href="#codeLine" x="800" y="150" width="300" height="30" />
+  <use href="#codeLine" x="850" y="200" width="250" height="30" />
+  <use href="#codeLine" x="900" y="250" width="200" height="30" />
+  <use href="#codeLine" x="850" y="300" width="250" height="30" />
+  <use href="#codeLine" x="800" y="350" width="300" height="30" />
+  
+  <!-- 节点连接图形 -->
+  <use href="#connection" x="200" y="400" width="300" height="300" />
+  <use href="#connection" x="900" y="400" width="300" height="300" />
+  
+  <!-- 编程括号元素 -->
+  <use href="#braces" x="100" y="500" width="200" height="200" />
+  <use href="#braces" x="1100" y="500" width="200" height="200" />
+  
+  <!-- 中央亮点动画区域 -->
+  <circle cx="720" cy="400" r="100" fill="none" stroke="rgba(100, 255, 218, 0.1)" stroke-width="2" />
+  <circle cx="720" cy="400" r="80" fill="none" stroke="rgba(100, 255, 218, 0.15)" stroke-width="2" />
+  <circle cx="720" cy="400" r="60" fill="none" stroke="rgba(100, 255, 218, 0.2)" stroke-width="2" />
+  <circle cx="720" cy="400" r="40" fill="none" stroke="rgba(100, 255, 218, 0.25)" stroke-width="2" />
+  <circle cx="720" cy="400" r="20" fill="rgba(100, 255, 218, 0.1)" />
+</svg> 

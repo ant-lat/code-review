@@ -1,0 +1,415 @@
+/* 问题列表页面样式 */
+.issues-page {
+  padding: 18px;
+  height: 100%;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 64px);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 0 4px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1f2937;
+  position: relative;
+  padding-left: 12px;
+}
+
+.page-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: linear-gradient(to bottom, #1677ff, #4096ff);
+  border-radius: 2px;
+}
+
+.filter-card {
+  margin-bottom: 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+}
+
+.filter-card .ant-card-body {
+  padding: 16px;
+}
+
+.basic-filters {
+  margin-bottom: 16px;
+}
+
+.advanced-filters {
+  padding: 18px;
+  background-color: #f5f9ff;
+  border-radius: 10px;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.filter-item {
+  margin-bottom: 10px;
+}
+
+.filter-label {
+  margin-right: 10px;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+/* 表格样式 */
+.issues-table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+}
+
+.issues-table .ant-card-body {
+  padding: 0;
+}
+
+.issues-table .ant-table-thead > tr > th {
+  background-color: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.3s;
+}
+
+.issues-table .ant-table-thead > tr > th:hover {
+  background-color: #f3f4f6;
+}
+
+.issues-table .ant-table-tbody > tr > td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.issues-table .ant-table-tbody > tr:nth-child(odd) > td {
+  background-color: #f9fafb;
+}
+
+.issues-table .ant-table-tbody > tr:nth-child(even) > td {
+  background-color: #ffffff;
+}
+
+.issues-table .ant-table-tbody > tr:hover > td {
+  background-color: #f0f9ff !important;
+}
+
+/* ID列样式 */
+.issues-table .ant-table-cell-fix-left-last,
+.issues-table .ant-table-cell:first-child {
+  font-weight: 500;
+  color: #4b5563;
+}
+
+/* 标题列样式 */
+.issues-table .ant-table-column-title {
+  font-weight: 600;
+}
+
+/* 表格行高度 */
+.issues-table .ant-table-tbody > tr {
+  height: 60px;
+}
+
+/* 按钮样式 */
+.issues-page .ant-btn {
+  border-radius: 8px;
+  height: 36px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+.issues-page .ant-btn-primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.issues-page .ant-btn-primary:hover,
+.issues-page .ant-btn-primary:focus {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.25);
+  transform: translateY(-1px);
+}
+
+.issues-page .ant-btn-link {
+  color: #2563eb;
+}
+
+.issues-page .ant-btn-link:hover {
+  color: #1d4ed8;
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* 标签和徽章样式 */
+.issues-page .ant-tag {
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-weight: 500;
+  margin-right: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: none;
+}
+
+/* 优先级标签样式 */
+.priority-tag {
+  width: 60px;
+  text-align: center;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: none;
+}
+
+/* 高优先级标签 */
+.priority-tag.ant-tag-red {
+  background: linear-gradient(to right, #ef4444, #f87171);
+  color: white;
+}
+
+/* 中优先级标签 */
+.priority-tag.ant-tag-orange {
+  background: linear-gradient(to right, #f59e0b, #fbbf24);
+  color: white;
+}
+
+/* 低优先级标签 */
+.priority-tag.ant-tag-green {
+  background: linear-gradient(to right, #10b981, #34d399);
+  color: white;
+}
+
+/* 状态徽章样式 */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+}
+
+.status-badge .ant-badge-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+/* 选择器和输入框样式 */
+.issues-page .ant-select,
+.issues-page .ant-input,
+.issues-page .ant-picker {
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s;
+}
+
+.issues-page .ant-select:hover,
+.issues-page .ant-input:hover,
+.issues-page .ant-picker:hover {
+  border-color: #2563eb;
+}
+
+.issues-page .ant-select:focus,
+.issues-page .ant-input:focus,
+.issues-page .ant-picker-focused {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* 分页样式 */
+.issues-table .ant-pagination {
+  margin: 16px;
+  text-align: right;
+}
+
+.issues-page .ant-pagination-item {
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.issues-page .ant-pagination-item:hover {
+  transform: translateY(-2px);
+}
+
+.issues-page .ant-pagination-item-active {
+  border-color: #2563eb;
+  background-color: #2563eb;
+}
+
+.issues-page .ant-pagination-item-active a {
+  color: white;
+}
+
+/* 列宽度调整 */
+.issues-table .ant-table-column-has-sorters {
+  white-space: nowrap;
+}
+
+/* 调整特定列宽度 */
+.issues-table .ant-table-thead > tr > th:nth-child(1), /* ID列 */
+.issues-table .ant-table-tbody > tr > td:nth-child(1) {
+  width: 80px;
+}
+
+.issues-table .ant-table-thead > tr > th:nth-child(2), /* 标题列 */
+.issues-table .ant-table-tbody > tr > td:nth-child(2) {
+  min-width: 250px;
+}
+
+.issues-table .ant-table-thead > tr > th:nth-child(3), /* 项目列 */
+.issues-table .ant-table-tbody > tr > td:nth-child(3) {
+  width: 140px;
+}
+
+.issues-table .ant-table-thead > tr > th:nth-child(4), /* 状态列 */
+.issues-table .ant-table-tbody > tr > td:nth-child(4) {
+  width: 100px;
+}
+
+.issues-table .ant-table-thead > tr > th:nth-child(5), /* 优先级列 */
+.issues-table .ant-table-tbody > tr > td:nth-child(5) {
+  width: 100px;
+}
+
+.issues-table .ant-table-thead > tr > th:nth-child(6), /* 类型列 */
+.issues-table .ant-table-tbody > tr > td:nth-child(6) {
+  width: 120px;
+}
+
+.issues-table .ant-table-thead > tr > th:nth-child(7), /* 创建者列 */
+.issues-table .ant-table-thead > tr > th:nth-child(8), /* 被分配人列 */
+.issues-table .ant-table-tbody > tr > td:nth-child(7),
+.issues-table .ant-table-tbody > tr > td:nth-child(8) {
+  width: 120px;
+}
+
+.issues-table .ant-table-thead > tr > th:nth-child(9), /* 创建时间列 */
+.issues-table .ant-table-thead > tr > th:nth-child(10), /* 更新时间列 */
+.issues-table .ant-table-tbody > tr > td:nth-child(9),
+.issues-table .ant-table-tbody > tr > td:nth-child(10) {
+  width: 160px;
+}
+
+.issues-table .ant-table-thead > tr > th:nth-child(11), /* 操作列 */
+.issues-table .ant-table-tbody > tr > td:nth-child(11) {
+  width: 120px;
+}
+
+/* 标签样式 */
+.issue-tag {
+  margin-right: 4px;
+  border-radius: 4px;
+}
+
+/* 状态标签颜色 */
+.status-tag-open {
+  color: #1d4ed8;
+  background-color: #dbeafe;
+}
+
+.status-tag-in-progress {
+  color: #9333ea;
+  background-color: #f3e8ff;
+}
+
+.status-tag-resolved {
+  color: #16a34a;
+  background-color: #dcfce7;
+}
+
+.status-tag-closed {
+  color: #64748b;
+  background-color: #f1f5f9;
+}
+
+/* 优先级标签颜色 */
+.priority-tag-high {
+  color: #dc2626;
+  background-color: #fee2e2;
+}
+
+.priority-tag-medium {
+  color: #ea580c;
+  background-color: #ffedd5;
+}
+
+.priority-tag-low {
+  color: #4b5563;
+  background-color: #f3f4f6;
+}
+
+/* 操作按钮样式 */
+.action-button {
+  margin-right: 8px;
+  padding: 0 8px;
+  height: 28px;
+  border-radius: 4px;
+}
+
+.action-button:last-child {
+  margin-right: 0;
+}
+
+.edit-button {
+  color: #1677ff;
+  border-color: #1677ff;
+  background-color: #f0f9ff;
+}
+
+.edit-button:hover {
+  color: #4096ff;
+  border-color: #4096ff;
+  background-color: #e6f4ff;
+}
+
+.delete-button {
+  color: #ef4444;
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.delete-button:hover {
+  color: #f87171;
+  border-color: #f87171;
+  background-color: #fee2e2;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .issues-page {
+    padding: 12px;
+  }
+  
+  .filter-item {
+    margin-bottom: 16px;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  
+  .page-title {
+    margin-bottom: 12px;
+  }
+  
+  .filter-card .ant-card-body,
+  .issues-table .ant-table-tbody > tr > td {
+    padding: 10px;
+  }
+} 
