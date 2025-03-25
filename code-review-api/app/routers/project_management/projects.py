@@ -67,6 +67,11 @@ def check_project_permission(db: Session, user_id: int, project_id: int, action:
             if global_perm:
                 return True
         elif action == 'admin':
+            # 检查是否是系统管理员 (角色id=1)
+            if permission_service.check_user_role(user_id, 1):
+                return True
+                
+            # 检查是否有全局项目管理权限
             global_perm = permission_service.check_user_permission(user_id, "project:manage_all")
             if global_perm:
                 return True
@@ -484,10 +489,10 @@ async def add_project_member(
         service = ProjectService(db)
         
         # 检查项目操作权限
-        # has_admin_permission = check_project_permission(db, current_user.id, project_id, 'admin')
-        # if not has_admin_permission:
-        #     logger.warning(f"用户 {current_user.username} 尝试向项目 {project_id} 添加成员，但权限不足")
-        #     raise AuthorizationError(message="无项目成员管理权限")
+        has_admin_permission = check_project_permission(db, current_user.id, project_id, 'admin')
+        if not has_admin_permission:
+            logger.warning(f"用户 {current_user.username} 尝试向项目 {project_id} 添加成员，但权限不足")
+            raise AuthorizationError(message="无项目成员管理权限")
         
         # 添加项目成员
         new_member = service.add_project_member(project_id, member_data.user_id, member_data.role_id)
@@ -515,6 +520,8 @@ async def add_project_member(
         process_time = time.time() - start_time
         logger.error(f"向项目 {project_id} 添加成员失败: {str(e)}, 处理时间: {process_time:.2f}秒")
         logger.debug(traceback.format_exc())
+        if "Duplicate entry" in str(e) or "project_user_role_unique" in str(e):
+            raise BusinessError(message="该用户已经拥有指定角色，无需重复添加")
         raise DatabaseError(message="添加项目成员失败", detail=str(e))
 
 @router.delete("/{project_id}/users/{user_id}", response_model=Response)

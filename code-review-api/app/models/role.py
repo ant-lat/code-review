@@ -17,6 +17,7 @@ class Role(Base):
     Attributes:
         id (int): 角色ID
         name (str): 角色名称
+        code (str): 角色代码，用于标识角色
         description (str): 角色描述
         role_type (str): 角色类型(project/user)
         created_at (datetime): 创建时间
@@ -26,6 +27,7 @@ class Role(Base):
 
     id = Column(Integer, primary_key=True, index=True, comment="角色ID")
     name = Column(String(50), nullable=False, index=True, comment="角色名称")
+    code = Column(String(50), nullable=True, index=True, comment="角色代码")
     description = Column(Text, nullable=True, comment="角色描述")
     role_type = Column(String(20), nullable=False, default="user", comment="角色类型(user/project)")
     created_at = Column(DateTime, default=datetime.utcnow, comment="创建时间")
@@ -54,7 +56,7 @@ class Role(Base):
 
     def __repr__(self):
         """返回角色对象的字符串表示"""
-        return f"<Role(id={self.id}, name={self.name}, role_type={self.role_type})>"
+        return f"<Role(id={self.id}, name={self.name}, code={self.code}, role_type={self.role_type})>"
 
     def to_dict(self) -> Dict[str, Any]:
         """
@@ -65,6 +67,7 @@ class Role(Base):
         return {
             "id": self.id,
             "name": self.name,
+            "code": self.code,
             "description": self.description,
             "role_type": self.role_type,
             "permissions": [p.code for p in self.permissions] if self.permissions else [],

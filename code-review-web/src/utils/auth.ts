@@ -17,6 +17,7 @@ interface Permission {
 interface Role {
   id: number;
   name: string;
+  code?: string;
 }
 
 // 扩展User接口以匹配后端返回的数据
@@ -134,7 +135,7 @@ export const hasPermission = (requiredPermission: string): boolean => {
   // 管理员默认拥有所有权限
   if (user.roles && user.roles.some(role => 
     (typeof role === 'string' && role === 'admin') || 
-    (typeof role === 'object' && role.name === 'admin')
+    (typeof role === 'object' && (role.name === 'admin' || role.code === 'system_admin'))
   )) {
     return true;
   }
@@ -157,7 +158,7 @@ export const hasRole = (requiredRole: string): boolean => {
   // 处理角色可能是对象或字符串的情况
   return user.roles.some(role => 
     (typeof role === 'string' && role === requiredRole) || 
-    (typeof role === 'object' && role.name === requiredRole)
+    (typeof role === 'object' && (role.name === requiredRole || role.code === requiredRole))
   );
 };
 

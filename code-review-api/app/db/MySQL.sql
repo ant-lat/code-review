@@ -46,6 +46,7 @@ CREATE TABLE permissions (
 CREATE TABLE roles (
     id INT AUTO_INCREMENT PRIMARY KEY COMMENT '角色ID',
     name VARCHAR(50) NOT NULL UNIQUE COMMENT '角色名称',
+    code VARCHAR(50) NOT NULL UNIQUE COMMENT '角色代码',
     description TEXT COMMENT '角色描述',
     role_type VARCHAR(20) NOT NULL DEFAULT 'user' COMMENT '角色类型：project或user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -310,70 +311,34 @@ INSERT INTO users (user_id,username, email,phone, password_hash, created_at) VAL
 ('tester', 'tester1', 'tester@codereview.com','15689789546', '$2a$12$LzV2DYssjcZGp.sS3uLA1OAVR5MhZ7VpSjCYo.8HRWJ5XQAxMzLlS', CURRENT_TIMESTAMP);
 
 -- 初始化角色数据
-INSERT INTO roles (name, description, role_type, created_at) VALUES
+INSERT INTO roles (id, name, code, description, role_type, created_at) VALUES
 -- 用户角色
-('admin', '系统管理员，拥有所有权限', 'user', CURRENT_TIMESTAMP),
-('project_manager', '项目管理人员，管理多个项目', 'user', CURRENT_TIMESTAMP),
-('developer', '开发人员，负责代码实现', 'user', CURRENT_TIMESTAMP),
-('reviewer', '代码审查人员，对代码进行审查', 'user', CURRENT_TIMESTAMP),
-('tester', '测试人员，负责测试和质量保证', 'user', CURRENT_TIMESTAMP),
+(1, 'admin', 'system_admin', '系统管理员，拥有所有权限', 'user', CURRENT_TIMESTAMP),
+(2, 'ops', 'ops_admin', '运维管理员，负责系统运维', 'user', CURRENT_TIMESTAMP),
+(3, 'project_manager', 'project_manager', '项目管理人员，管理多个项目', 'user', CURRENT_TIMESTAMP),
+(4, 'user', 'normal_user', '普通用户，基本权限', 'user', CURRENT_TIMESTAMP),
 
 -- 项目角色
-('PM', '项目经理，负责项目管理和协调', 'project', CURRENT_TIMESTAMP),
-('SE', '软件工程师，负责软件设计和开发', 'project', CURRENT_TIMESTAMP),
-('DEV', '开发人员，负责代码实现', 'project', CURRENT_TIMESTAMP),
-('QA', '质量专家，负责代码审查和质量控制', 'project', CURRENT_TIMESTAMP);
+(5, 'PM', 'project_admin', '项目经理，负责项目管理和协调', 'project', CURRENT_TIMESTAMP),
+(6, 'SE', 'senior_developer', '高级开发工程师，负责架构设计和开发', 'project', CURRENT_TIMESTAMP),
+(7, 'DEV', 'developer', '开发工程师，负责代码实现', 'project', CURRENT_TIMESTAMP),
+(8, 'QA', 'quality_assurance', '测试工程师，负责测试和质量保证', 'project', CURRENT_TIMESTAMP);
 
 -- 角色权限关联
--- 管理员角色权限
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT 1, id FROM permissions;
 
--- 项目管理角色权限
+-- 运维管理员权限
 INSERT INTO role_permissions (role_id, permission_id)
-SELECT 2, id FROM permissions 
-WHERE code IN ('project:view', 'project:create', 'project:edit', 'project:manage', 'project:member:manage',
-              'issue:view', 'issue:create', 'issue:edit', 'issue:assign', 'issue:comment', 'issue:manage',
-              'code:review', 'code:analyze', 'team:view', 'team:manage');
+SELECT 2, id FROM permissions WHERE module IN ('系统管理', '用户管理', '角色管理');
 
--- 开发人员角色权限
+-- 项目管理员权限
 INSERT INTO role_permissions (role_id, permission_id)
-SELECT 3, id FROM permissions 
-WHERE code IN ('project:view', 'project:create:basic', 'project:edit:basic', 'project:list', 'project:detail', 'issue:view', 'issue:create', 'issue:comment', 'code:review');
+SELECT 3, id FROM permissions WHERE module IN ('项目管理', '问题管理', '代码审核');
 
--- 审查人员角色权限
+-- 普通用户权限
 INSERT INTO role_permissions (role_id, permission_id)
-SELECT 4, id FROM permissions 
-WHERE code IN ('project:view', 'issue:view', 'issue:create', 'issue:edit', 'issue:comment',
-              'code:review', 'code:analyze');
-
--- 测试人员角色权限
-INSERT INTO role_permissions (role_id, permission_id)
-SELECT 5, id FROM permissions 
-WHERE code IN ('project:view', 'issue:view', 'issue:create', 'issue:edit', 'issue:comment');
-
--- 项目PM角色权限
-INSERT INTO role_permissions (role_id, permission_id)
-SELECT 6, id FROM permissions 
-WHERE code IN ('project:manage', 'project:edit', 'project:member:manage', 'issue:manage',
-              'code:review:manage', 'team:manage');
-
--- 软件工程师角色权限
-INSERT INTO role_permissions (role_id, permission_id)
-SELECT 7, id FROM permissions 
-WHERE code IN ('project:view', 'issue:view', 'issue:create', 'issue:edit', 'issue:comment',
-              'code:review', 'code:analyze');
-
--- 开发人员项目角色权限
-INSERT INTO role_permissions (role_id, permission_id)
-SELECT 8, id FROM permissions 
-WHERE code IN ('project:view', 'issue:view', 'issue:create', 'issue:comment', 'code:review');
-
--- 质量专家角色权限
-INSERT INTO role_permissions (role_id, permission_id)
-SELECT 9, id FROM permissions 
-WHERE code IN ('project:view', 'issue:view', 'issue:create', 'issue:edit', 'issue:comment',
-              'code:review', 'code:analyze');
+SELECT 4, id FROM permissions WHERE code IN ('project:view', 'issue:view', 'review:view');
 
 -- 用户角色关联
 INSERT INTO user_roles (user_id, role_id, created_at, is_active) VALUES
@@ -394,22 +359,23 @@ INSERT INTO projects (name, description, repository_url, repository_type, branch
 -- 项目角色关联
 INSERT INTO project_roles (project_id, user_id, role_id, joined_at, is_active) VALUES
 -- 代码检视系统项目
-(1, 1, 6, CURRENT_TIMESTAMP, TRUE), -- admin用户在项目1中是PM
-(1, 3, 8, CURRENT_TIMESTAMP, TRUE), -- developer用户在项目1中是DEV
-(1, 4, 9, CURRENT_TIMESTAMP, TRUE), -- reviewer用户在项目1中是QA
-(1, 5, 9, CURRENT_TIMESTAMP, TRUE), -- tester用户在项目1中是QA
+(1, 1, 5, CURRENT_TIMESTAMP, TRUE), -- admin用户在项目1中是PM
+(1, 3, 7, CURRENT_TIMESTAMP, TRUE), -- developer用户在项目1中是DEV
+(1, 4, 8, CURRENT_TIMESTAMP, TRUE), -- reviewer用户在项目1中是QA
+(1, 5, 8, CURRENT_TIMESTAMP, TRUE), -- tester用户在项目1中是QA
 
 -- 前端示例项目
-(2, 2, 6, CURRENT_TIMESTAMP, TRUE), -- pm用户在项目2中是PM
-(2, 3, 8, CURRENT_TIMESTAMP, TRUE), -- developer用户在项目2中是DEV
-(2, 4, 9, CURRENT_TIMESTAMP, TRUE), -- reviewer用户在项目2中是QA
-(2, 5, 9, CURRENT_TIMESTAMP, TRUE), -- tester用户在项目2中是QA
+(2, 1, 5, CURRENT_TIMESTAMP, TRUE), -- admin用户在项目2中也是PM
+(2, 2, 5, CURRENT_TIMESTAMP, TRUE), -- pm用户在项目2中是PM
+(2, 3, 7, CURRENT_TIMESTAMP, TRUE), -- developer用户在项目2中是DEV
+(2, 4, 8, CURRENT_TIMESTAMP, TRUE), -- reviewer用户在项目2中是QA
+(2, 5, 8, CURRENT_TIMESTAMP, TRUE), -- tester用户在项目2中是QA
 
 -- 后端API服务
-(3, 2, 6, CURRENT_TIMESTAMP, TRUE), -- pm用户在项目3中是PM
-(3, 3, 8, CURRENT_TIMESTAMP, TRUE), -- developer用户在项目3中是DEV
-(3, 1, 7, CURRENT_TIMESTAMP, TRUE), -- admin用户在项目3中是SE
-(3, 5, 9, CURRENT_TIMESTAMP, TRUE); -- tester用户在项目3中是QA
+(3, 2, 5, CURRENT_TIMESTAMP, TRUE), -- pm用户在项目3中是PM
+(3, 3, 7, CURRENT_TIMESTAMP, TRUE), -- developer用户在项目3中是DEV
+(3, 1, 6, CURRENT_TIMESTAMP, TRUE), -- admin用户在项目3中是SE
+(3, 5, 8, CURRENT_TIMESTAMP, TRUE); -- tester用户在项目3中是QA
 
 -- 初始化菜单数据（关联到权限）
 INSERT INTO menus (title, path, icon, parent_id, order_num, permission_id) VALUES

@@ -26,6 +26,7 @@ class AppSettingsState : PersistentStateComponent<AppSettingsState.State> {
         var savedUsername: String = ""
         var savedPassword: String = ""
         var loggedInUsername: String = ""
+        var autoLogin: Boolean = false
     }
 
     private var myState = State()
@@ -74,4 +75,11 @@ class AppSettingsState : PersistentStateComponent<AppSettingsState.State> {
     var loggedInUsername: String
         get() = myState.loggedInUsername
         set(value) { myState.loggedInUsername = value }
+
+    /**
+     * 获取/设置自动登录状态
+     */
+    var autoLogin: Boolean
+        get() = myState.autoLogin
+        set(value) { myState.autoLogin = value }
 } 

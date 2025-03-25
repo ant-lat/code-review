@@ -5,7 +5,8 @@ import { User } from '../../../api/types';
 import { getProjectMembers, addProjectMember, removeProjectMember } from '../../../api/projects';
 import { getUsers } from '../../../api/users';
 import { checkPermission } from '../../../api/auth';
-import { get } from '../../../api/request';
+import { getAllProjectRoles } from '../../../api/roles';
+import { ResponseBase } from '../../../api/types';
 import { debounce } from 'lodash';
 import './ProjectMembers.css';
 
@@ -128,8 +129,8 @@ const ProjectMembers: React.FC<ProjectMembersProps> = ({ projectId, onClose }) =
     try {
       setRoleLoading(true);
       
-      // 修改为使用正确的API路径
-      const response = await get<any>('/roles', { role_type: 'project' });
+      // 使用正确的API函数
+      const response = await getAllProjectRoles() as ResponseBase<any>;
       
       if (response?.data?.items) {
         console.log('获取角色列表响应:', response.data.items);

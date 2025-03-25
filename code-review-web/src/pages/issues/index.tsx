@@ -15,7 +15,8 @@ import {
   Row,
   Col,
   Modal,
-  TableProps
+  TableProps,
+  Popconfirm
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { 
@@ -27,7 +28,9 @@ import {
   CheckCircleOutlined,
   FilterOutlined,
   ReloadOutlined,
-  EditOutlined
+  EditOutlined,
+  EyeOutlined,
+  DeleteOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { CanceledError } from 'axios';
@@ -436,28 +439,15 @@ const IssuesPage: React.FC = () => {
 
   // 点击删除按钮
   const handleDelete = async (id: number) => {
-    Modal.confirm({
-      title: '确认删除',
-      content: '确定要删除这个问题吗？此操作不可逆。',
-      okText: '确认',
-      cancelText: '取消',
-      okButtonProps: { danger: true },
-      onOk: async () => {
-        try {
-          // 实际删除逻辑
-          const res = await deleteIssue(id);
-          if (res.success) {
-            message.success('删除成功');
-            fetchData(pagination.current, pagination.pageSize);
-          } else {
-            message.error(res.message || '删除失败');
-          }
-        } catch (error) {
-          console.error('删除问题时出错:', error);
-          message.error('删除失败');
-        }
-      }
-    });
+    try {
+      // 调用删除API
+      await deleteIssue(id);
+      message.success('删除成功');
+      // 刷新列表
+      fetchIssues();
+    } catch (error) {
+      message.error('删除失败');
+    }
   };
 
   // 表格列定义
@@ -604,36 +594,35 @@ const IssuesPage: React.FC = () => {
     },
     {
       title: '操作',
-      key: 'actions',
+      key: 'action',
       width: 100,
-      render: (text: string, record: IssueItem) => (
-        <div>
-          <Permission roles={['admin', 'developer', 'user']}>
-            <Button 
-              className="action-button edit-button"
-              type="link" 
-              onClick={(e) => {
-                e.stopPropagation();
-                handleEditIssue(record);
-              }}
-            >
-              编辑
-            </Button>
-          </Permission>
-          <Permission roles={['admin']}>
-            <Button 
-              className="action-button delete-button"
-              type="link" 
-              danger 
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDelete(record.id);
-              }}
-            >
+      render: (_, record) => (
+        <Space size="middle">
+          <Button
+            type="link"
+            icon={<EyeOutlined />}
+            onClick={() => navigate(`/issues/${record.id}`)}
+          >
+            查看
+          </Button>
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record)}
+          >
+            编辑
+          </Button>
+          <Popconfirm
+            title="确定要删除这个问题吗？"
+            onConfirm={() => handleDelete(record.id)}
+            okText="确定"
+            cancelText="取消"
+          >
+            <Button type="link" danger icon={<DeleteOutlined />}>
               删除
             </Button>
-          </Permission>
-        </div>
+          </Popconfirm>
+        </Space>
       ),
     },
   ];

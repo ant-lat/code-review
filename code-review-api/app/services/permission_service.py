@@ -6,12 +6,18 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_, desc
 from typing import List, Dict, Any, Optional
+from fastapi import Depends
+import logging
 
+from app.database import get_db
 from app.models.user import User
 from app.models.role import Role
 from app.models.user_role import UserRole
 from app.models.project import Project
 from app.models.project_role import ProjectRole
+from app.models.permission import Permission
+from app.models.role_permission import RolePermission
+from app.core.exceptions import ResourceNotFound, DatabaseError
 from app.config.logging_config import logger
 from app.services.base_service import BaseService
 
@@ -57,6 +63,30 @@ class PermissionService(BaseService):
             return False
         
         return self._safe_query(_query, f"检查用户 {user_id} 权限 {permission_code} 失败", False)
+    
+    def check_user_role(self, user_id: int, role_id: int) -> bool:
+        """
+        检查用户是否具有指定角色
+        
+        Args:
+            user_id (int): 用户ID
+            role_id (int): 角色ID
+            
+        Returns:
+            bool: 用户是否具有指定角色
+        """
+        try:
+            # 检查用户是否有指定角色
+            user_role = self.db.query(UserRole).filter(
+                UserRole.user_id == user_id,
+                UserRole.role_id == role_id,
+                UserRole.is_active == True
+            ).first()
+            
+            return user_role is not None
+        except Exception as e:
+            logger.error(f"检查用户角色失败: 用户ID={user_id}, 角色ID={role_id}, 错误: {str(e)}")
+            return False
     
     def check_project_member(self, user_id: int, project_id: int) -> bool:
         """

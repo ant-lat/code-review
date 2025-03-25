@@ -292,25 +292,25 @@ class IssueListPanel(private val project: Project) : JPanel(BorderLayout()), Dis
         // 设置渲染器
         projectCombo.renderer = object : DefaultListCellRenderer() {
             override fun getListCellRendererComponent(
-                list: JList<*>,
+                list: JList<*>?,
                 value: Any?,
                 index: Int,
                 isSelected: Boolean,
                 cellHasFocus: Boolean
             ): Component {
+                val label = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
                 when (value) {
-                    null -> setText("请选择项目")
+                    null -> label.text = "请选择项目"
                     is ApiModels.ProjectInfo -> {
                         if (value.id <= 0) {
-                            setText("请选择项目")
+                            label.text = "请选择项目"
                         } else {
-                            setText(value.name)
+                            label.text = value.name
                         }
                     }
-                    else -> setText(value.toString())
+                    else -> label.text = value.toString()
                 }
-                
-                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
+                return label
             }
         }
         

@@ -35,7 +35,7 @@ services:
       dockerfile: ../docker/backend/Dockerfile
     container_name: code-review-api
     env_file:
-      - ./backend/.env
+      - ../code-review-api/.env.production
     ports:
       - "8000:8000"
     depends_on:
@@ -52,8 +52,6 @@ services:
     container_name: code-review-web
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-    env_file:
-      - ./frontend/.env.production
     ports:
       - "80:80"
     depends_on:

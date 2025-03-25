@@ -910,9 +910,8 @@ class CreateIssueDialog(
 
             // 在后台线程中执行网络请求
             com.intellij.openapi.application.ApplicationManager.getApplication().executeOnPooledThread {
-
                 try {
-                    // 获取默认项目，而不是重新查询项目列表
+                    // 获取默认项目
                     val defaultProject = issueService.getDefaultProject()
 
                     SwingUtilities.invokeLater {
@@ -928,78 +927,20 @@ class CreateIssueDialog(
                             setErrorText(null)
                             // 启用"确定"按钮
                             setOKActionEnabled(true)
+                            
+                            // 立即加载默认项目的指派人列表
+                            loadProjectMembers(defaultProject.id)
                         } else {
-                            // 如果没有默认项目，尝试加载项目列表
-                            println("[DEBUG] 没有默认项目，尝试加载项目列表")
-
-                            // 在后台线程中执行网络请求
-                            com.intellij.openapi.application.ApplicationManager.getApplication().executeOnPooledThread {
-                                try {
-                                    val projects = issueService.getProjects(page = 1, pageSize = 100)
-
-
-                                    SwingUtilities.invokeLater {
-                                        if (projects.isNotEmpty()) {
-                                            println("[DEBUG] 成功获取${projects.size}个项目")
-                                            projects.forEach {
-                                                println("[DEBUG] 项目: ${it.id} - ${it.name}")
-                                                projectCombo.addItem(it)
-                                            }
-
-                                            // 添加一个提示项
-                                            if (projectCombo.itemCount > 0) {
-                                                projectCombo.selectedIndex = -1
-                                                projectCombo.addItem(ApiModels.ProjectInfo(
-                                                    id = -1,
-                                                    name = "-- 请选择项目 --",
-                                                    description = "",
-                                                    createdAt = "",
-                                                    repositoryUrl = null,
-                                                    repositoryType = null,
-                                                    branch = null,
-                                                    status = null,
-                                                    memberCount = null,
-                                                    creator = null
-                                                ))
-                                                projectCombo.selectedIndex = projectCombo.itemCount - 1
-                                            }
-                                            
-                                            // 标记项目已加载
-                                            projectsLoaded = true
-
-                                            // 但不启用确定按钮，直到用户选择了有效项目
-                                            setOKActionEnabled(false)
-                                            setErrorText("请选择一个项目", projectCombo)
-                                        } else {
-                                            // 如果没有项目，提示用户
-                                            println("[WARN] 没有获取到项目，或项目列表为空")
-                                            projectCombo.addItem(null)
-                                            setErrorText("请先登录并确保有可用项目", projectCombo)
-                                            // 禁用"确定"按钮
-                                            setOKActionEnabled(false)
-                                        }
-                                    }
-                                } catch (e: Exception) {
-                                    SwingUtilities.invokeLater {
-                                        println("[ERROR] 加载项目列表时出错: ${e.message}")
-                                        e.printStackTrace()
-                                        projectCombo.addItem(null)
-                                        setErrorText("加载项目失败: ${e.message}", projectCombo)
-                                        // 禁用"确定"按钮
-                                        setOKActionEnabled(false)
-                                    }
-                                }
-                            }
+                            // 如果没有默认项目，加载项目列表
+                            loadProjectList()
                         }
                     }
                 } catch (e: Exception) {
                     SwingUtilities.invokeLater {
                         println("[ERROR] 加载默认项目时出错: ${e.message}")
                         e.printStackTrace()
-                        projectCombo.addItem(null)
-                        setErrorText("加载项目失败: ${e.message}", projectCombo)
-                        // 禁用"确定"按钮
-                        setOKActionEnabled(false)
+                        // 如果加载默认项目失败，尝试加载项目列表
+                        loadProjectList()
                     }
                 }
             }
@@ -1008,154 +949,153 @@ class CreateIssueDialog(
             e.printStackTrace()
             projectCombo.addItem(null)
             setErrorText("加载项目失败: ${e.message}", projectCombo)
-            // 禁用"确定"按钮
             setOKActionEnabled(false)
         }
 
+        // 添加项目选择监听器
         projectCombo.addActionListener {
-            selectedProject = projectCombo.selectedItem as? ApiModels.ProjectInfo
+            val newSelectedProject = projectCombo.selectedItem as? ApiModels.ProjectInfo
             
-            // 验证选择的项目是否有效
-            if (selectedProject != null && selectedProject?.id ?: -1 > 0) {
-                setErrorText(null)
-                // 启用"确定"按钮
-                setOKActionEnabled(true)
-                // 重新加载指派人列表
-                loadProjectMembers(selectedProject?.id ?: 0)
-            } else {
-                setErrorText("请选择一个项目", projectCombo)
-                // 禁用"确定"按钮
-                setOKActionEnabled(false)
+            // 只有当选择了新的项目时才触发加载
+            if (newSelectedProject != selectedProject) {
+                selectedProject = newSelectedProject
+                
+                // 验证选择的项目是否有效
+                if (selectedProject != null && selectedProject?.id ?: -1 > 0) {
+                    setErrorText(null)
+                    setOKActionEnabled(true)
+                    
+                    // 加载指派人列表
+                    println("[DEBUG] 项目选择变更，加载新项目的指派人列表: ${selectedProject?.id}")
+                    loadProjectMembers(selectedProject?.id ?: 0)
+                } else {
+                    setErrorText("请选择一个项目", projectCombo)
+                    setOKActionEnabled(false)
+                    // 清空指派人列表
+                    clearAssigneeCombo()
+                }
             }
         }
     }
-    
+
+    /**
+     * 加载项目列表
+     */
+    private fun loadProjectList() {
+        println("[DEBUG] 加载项目列表")
+        com.intellij.openapi.application.ApplicationManager.getApplication().executeOnPooledThread {
+            try {
+                val projects = issueService.getProjects(page = 1, pageSize = 100)
+
+                SwingUtilities.invokeLater {
+                    if (projects.isNotEmpty()) {
+                        println("[DEBUG] 成功获取${projects.size}个项目")
+                        // 先添加提示项
+                        projectCombo.addItem(ApiModels.ProjectInfo(
+                            id = -1,
+                            name = "-- 请选择项目 --",
+                            description = "",
+                            createdAt = ""
+                        ))
+                        // 再添加实际的项目列表
+                        projects.forEach {
+                            println("[DEBUG] 项目: ${it.id} - ${it.name}")
+                            projectCombo.addItem(it)
+                        }
+                        
+                        // 选择提示项
+                        projectCombo.selectedIndex = 0
+                        
+                        // 标记项目已加载
+                        projectsLoaded = true
+                        
+                        setOKActionEnabled(false)
+                        setErrorText("请选择一个项目", projectCombo)
+                    } else {
+                        println("[WARN] 没有获取到项目，或项目列表为空")
+                        projectCombo.addItem(null)
+                        setErrorText("请先登录并确保有可用项目", projectCombo)
+                        setOKActionEnabled(false)
+                    }
+                }
+            } catch (e: Exception) {
+                SwingUtilities.invokeLater {
+                    println("[ERROR] 加载项目列表时出错: ${e.message}")
+                    e.printStackTrace()
+                    projectCombo.addItem(null)
+                    setErrorText("加载项目失败: ${e.message}", projectCombo)
+                    setOKActionEnabled(false)
+                }
+            }
+        }
+    }
+
+    /**
+     * 清空指派人下拉框
+     */
+    private fun clearAssigneeCombo() {
+        assigneeCombo.removeAllItems()
+        assigneeCombo.addItem(null)
+    }
+
     /**
      * 加载项目成员列表
      */
     private fun loadProjectMembers(projectId: Int) {
-        assigneeCombo.removeAllItems()
-        assigneeCombo.addItem(null) // 添加"未指派"选项
+        println("[DEBUG] 开始加载项目成员，项目ID: $projectId")
         
-        // 设置渲染器
-        assigneeCombo.renderer = object : DefaultListCellRenderer() {
-            override fun getListCellRendererComponent(
-                list: JList<*>?,
-                value: Any?,
-                index: Int,
-                isSelected: Boolean,
-                cellHasFocus: Boolean
-            ): Component {
-                val label = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
-                if (value == null) {
-                    label.text = "未指派"
-                } else if (value is ApiModels.UserInfo) {
-                    label.text = value.username
+        // 如果项目ID无效，清空指派人列表并返回
+        if (projectId <= 0) {
+            println("[DEBUG] 项目ID无效，清空指派人列表: $projectId")
+            clearAssigneeCombo()
+            return
+        }
+
+        // 设置渲染器（如果还没设置）
+        if (assigneeCombo.renderer !is DefaultListCellRenderer) {
+            assigneeCombo.renderer = object : DefaultListCellRenderer() {
+                override fun getListCellRendererComponent(
+                    list: JList<*>?,
+                    value: Any?,
+                    index: Int,
+                    isSelected: Boolean,
+                    cellHasFocus: Boolean
+                ): Component {
+                    val label = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
+                    if (value == null) {
+                        label.text = "未指派"
+                    } else if (value is ApiModels.UserInfo) {
+                        label.text = value.username
+                    }
+                    return label
                 }
-                return label
             }
         }
         
-        // 如果项目ID无效，则不加载成员
-        if (projectId <= 0) {
-            println("[DEBUG] 项目ID无效，不加载项目成员: $projectId")
-            return
-        }
+        // 先清空现有列表并添加"未指派"选项
+        clearAssigneeCombo()
         
-        // 先尝试从内存中获取指派人列表
-        val issueService = IssueService.getInstance(project)
+        // 先尝试从IssueService内存缓存中获取指派人列表
         val assigneesFromMemory = issueService.getAssigneesFromMemory(projectId)
         
         if (assigneesFromMemory.isNotEmpty()) {
-            println("[DEBUG] 创建问题对话框使用内存缓存中的指派人数据，项目ID: $projectId，数量: ${assigneesFromMemory.size}")
-            
-            // 将用户列表添加到下拉框
-            assigneesFromMemory.forEach { user ->
-                assigneeCombo.addItem(user)
-            }
-            
-            // 如果是编辑模式，尝试选择当前指派人
-            if (existingIssue != null && existingIssue.assigneeId != null) {
-                val assigneeId = existingIssue.assigneeId
-                for (i in 0 until assigneeCombo.itemCount) {
-                    val user = assigneeCombo.getItemAt(i)
-                    if (user != null && user.id == assigneeId) {
-                        assigneeCombo.selectedIndex = i
-                        break
-                    }
+            println("[DEBUG] 使用内存缓存中的指派人数据，数量: ${assigneesFromMemory.size}")
+            SwingUtilities.invokeLater {
+                assigneesFromMemory.forEach { user ->
+                    assigneeCombo.addItem(user)
                 }
             }
-            
             return
         }
-        
-        // 其次尝试从IssueListPanel缓存获取
-        val toolWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
-            .getToolWindow("CodeReview")
-        
-        if (toolWindow != null) {
-            val contents = toolWindow.contentManager.contents
-            if (contents.isNotEmpty()) {
-                val content = contents[0]
-                val component = content.component
-                if (component is com.ant.code.coderplugin.ui.IssueListPanel) {
-                    // 使用IssueListPanel中缓存的项目成员
-                    val cachedMembers = component.getProjectMembers(projectId)
-                    if (cachedMembers.isNotEmpty()) {
-                        println("[DEBUG] 创建问题对话框使用IssueListPanel中缓存的项目成员数据，项目ID: $projectId")
-                        
-                        // 使用Set确保用户ID的唯一性
-                        val uniqueUserMap = mutableMapOf<Int, ApiModels.UserInfo>()
-                        
-                        // 将项目成员转换为UserInfo对象并添加到Map中
-                        cachedMembers.forEach { member ->
-                            // 只有当用户ID不在map中才添加
-                            if (!uniqueUserMap.containsKey(member.userId)) {
-                                uniqueUserMap[member.userId] = ApiModels.UserInfo(
-                                    id = member.userId,
-                                    username = member.username,
-                                    email = null,
-                                    roles = listOf(ApiModels.UserInfo.Role(name = member.roleName)),
-                                    isActive = member.isActive
-                                )
-                            }
-                        }
-                        
-                        println("[DEBUG] 过滤后的唯一用户数量: ${uniqueUserMap.size}")
-                        
-                        // 将用户列表添加到下拉框
-                        uniqueUserMap.values.forEach { user ->
-                            assigneeCombo.addItem(user)
-                        }
-                        
-                        // 如果是编辑模式，尝试选择当前指派人
-                        if (existingIssue != null && existingIssue.assigneeId != null) {
-                            val assigneeId = existingIssue.assigneeId
-                            for (i in 0 until assigneeCombo.itemCount) {
-                                val user = assigneeCombo.getItemAt(i)
-                                if (user != null && user.id == assigneeId) {
-                                    assigneeCombo.selectedIndex = i
-                                    break
-                                }
-                            }
-                        }
-                        
-                        return
-                    }
-                }
-            }
-        }
-        
-        // 如果缓存没有，则从服务器加载并启动预加载
-        println("[DEBUG] 创建问题对话框从服务器加载项目成员数据，项目ID: $projectId")
         
         // 启动预加载
         issueService.preloadAssignees(projectId)
         
+        // 从服务器加载
         com.intellij.openapi.application.ApplicationManager.getApplication().executeOnPooledThread {
             try {
-                val issueService = IssueService.getInstance(project)
                 val members = issueService.getProjectMembers(projectId)
+                println("[DEBUG] 从服务器获取到项目成员数量: ${members.size}")
                 
                 SwingUtilities.invokeLater {
                     // 使用Set确保用户ID的唯一性
@@ -1163,7 +1103,6 @@ class CreateIssueDialog(
                     
                     // 将项目成员转换为UserInfo对象并添加到Map中
                     members.forEach { member ->
-                        // 只有当用户ID不在map中才添加
                         if (!uniqueUserMap.containsKey(member.userId)) {
                             uniqueUserMap[member.userId] = ApiModels.UserInfo(
                                 id = member.userId,
@@ -1175,37 +1114,24 @@ class CreateIssueDialog(
                         }
                     }
                     
+                    println("[DEBUG] 过滤后的唯一用户数量: ${uniqueUserMap.size}")
+                    
                     // 清空已有项目，避免与已有项重复
-                    assigneeCombo.removeAllItems()
-                    assigneeCombo.addItem(null) // 添加"未指派"选项
+                    clearAssigneeCombo()
                     
                     // 将过滤后的用户列表添加到下拉框
                     uniqueUserMap.values.forEach { user ->
                         assigneeCombo.addItem(user)
                     }
-                    
-                    // 如果是编辑模式，尝试选择当前指派人
-                    if (existingIssue != null && existingIssue.assigneeId != null) {
-                        val assigneeId = existingIssue.assigneeId
-                        for (i in 0 until assigneeCombo.itemCount) {
-                            val user = assigneeCombo.getItemAt(i)
-                            if (user != null && user.id == assigneeId) {
-                                assigneeCombo.selectedIndex = i
-                                break
-                            }
-                        }
-                    }
                 }
             } catch (e: Exception) {
+                println("[ERROR] 加载项目成员失败: ${e.message}")
+                e.printStackTrace()
+                
                 SwingUtilities.invokeLater {
-                    println("[ERROR] 加载项目成员失败: ${e.message}")
+                    setErrorText("加载项目成员失败: ${e.message}", assigneeCombo)
                 }
             }
-        }
-        
-        // 添加动作监听器
-        assigneeCombo.addActionListener {
-            selectedAssignee = assigneeCombo.selectedItem as? ApiModels.UserInfo
         }
     }
     

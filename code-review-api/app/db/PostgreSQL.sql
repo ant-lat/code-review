@@ -96,18 +96,22 @@ EXECUTE FUNCTION update_permissions_updated_at();
 -- 角色表
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(50) NOT NULL,
+    code VARCHAR(50),
     description TEXT,
     role_type VARCHAR(20) NOT NULL DEFAULT 'user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uk_roles_name UNIQUE (name),
+    CONSTRAINT uk_roles_code UNIQUE (code)
 );
 
 COMMENT ON TABLE roles IS '角色表';
 COMMENT ON COLUMN roles.id IS '角色ID';
 COMMENT ON COLUMN roles.name IS '角色名称';
+COMMENT ON COLUMN roles.code IS '角色代码';
 COMMENT ON COLUMN roles.description IS '角色描述';
-COMMENT ON COLUMN roles.role_type IS '角色类型：project或user';
+COMMENT ON COLUMN roles.role_type IS '角色类型(user/project)';
 COMMENT ON COLUMN roles.created_at IS '创建时间';
 COMMENT ON COLUMN roles.updated_at IS '更新时间';
 
@@ -125,6 +129,10 @@ CREATE TRIGGER roles_updated_at
 BEFORE UPDATE ON roles
 FOR EACH ROW
 EXECUTE FUNCTION update_roles_updated_at();
+
+-- 创建索引
+CREATE INDEX IF NOT EXISTS idx_roles_name ON roles(name);
+CREATE INDEX IF NOT EXISTS idx_roles_code ON roles(code);
 
 -- 角色权限关联表
 CREATE TABLE role_permissions (
@@ -514,78 +522,35 @@ COMMENT ON COLUMN analysis_results.created_at IS '创建时间';
 INSERT INTO users (user_id, username, email, phone, password_hash, is_active) 
 VALUES ('admin', 'admin', 'admin@example.com', '13800138000', '$2b$12$sWSdI13BJ5ipPca/5CJUmuoGwdCI2zX36Hh1bi0vcd3jRVqkwOtYW', true);
 
--- 添加基本角色
-INSERT INTO roles (name, description, role_type) VALUES ('管理员', '系统管理员，拥有所有权限', 'user');
-INSERT INTO roles (name, description, role_type) VALUES ('项目管理员', '项目管理员，负责管理项目', 'project');
-INSERT INTO roles (name, description, role_type) VALUES ('开发人员', '开发人员，负责开发代码', 'project');
-INSERT INTO roles (name, description, role_type) VALUES ('审核人员', '代码审核人员，负责审核代码', 'project');
-INSERT INTO roles (name, description, role_type) VALUES ('普通用户', '普通用户，仅有基本查看权限', 'user');
+-- 初始化角色数据
+INSERT INTO roles (id, name, code, description, role_type, created_at) VALUES
+-- 用户角色
+(1, 'admin', 'system_admin', '系统管理员，拥有所有权限', 'user', CURRENT_TIMESTAMP),
+(2, 'ops', 'ops_admin', '运维管理员，负责系统运维', 'user', CURRENT_TIMESTAMP),
+(3, 'project_manager', 'project_manager', '项目管理人员，管理多个项目', 'user', CURRENT_TIMESTAMP),
+(4, 'user', 'normal_user', '普通用户，基本权限', 'user', CURRENT_TIMESTAMP),
 
--- 添加基本权限
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('user:view', '查看用户', '查看用户列表和详情', '用户管理');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('user:create', '创建用户', '创建新用户', '用户管理');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('user:edit', '编辑用户', '编辑用户信息', '用户管理');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('user:delete', '删除用户', '删除用户', '用户管理');
+-- 项目角色
+(5, 'PM', 'project_admin', '项目经理，负责项目管理和协调', 'project', CURRENT_TIMESTAMP),
+(6, 'SE', 'senior_developer', '高级开发工程师，负责架构设计和开发', 'project', CURRENT_TIMESTAMP),
+(7, 'DEV', 'developer', '开发工程师，负责代码实现', 'project', CURRENT_TIMESTAMP),
+(8, 'QA', 'quality_assurance', '测试工程师，负责测试和质量保证', 'project', CURRENT_TIMESTAMP);
 
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('role:view', '查看角色', '查看角色列表和详情', '角色管理');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('role:create', '创建角色', '创建新角色', '角色管理');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('role:edit', '编辑角色', '编辑角色信息', '角色管理');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('role:delete', '删除角色', '删除角色', '角色管理');
-
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('project:view', '查看项目', '查看项目列表和详情', '项目管理');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('project:create', '创建项目', '创建新项目', '项目管理');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('project:edit', '编辑项目', '编辑项目信息', '项目管理');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('project:delete', '删除项目', '删除项目', '项目管理');
-
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('issue:view', '查看问题', '查看问题列表和详情', '问题管理');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('issue:create', '创建问题', '创建新问题', '问题管理');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('issue:edit', '编辑问题', '编辑问题信息', '问题管理');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('issue:delete', '删除问题', '删除问题', '问题管理');
-
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('review:view', '查看代码审核', '查看代码审核列表和详情', '代码审核');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('review:create', '创建代码审核', '创建新代码审核', '代码审核');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('review:edit', '编辑代码审核', '编辑代码审核信息', '代码审核');
-INSERT INTO permissions (code, name, description, module) 
-VALUES ('review:delete', '删除代码审核', '删除代码审核', '代码审核');
-
--- 关联角色和权限（管理员拥有所有权限）
+-- 角色权限关联
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT 1, id FROM permissions;
 
+-- 运维管理员权限
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT 2, id FROM permissions WHERE module IN ('系统管理', '用户管理', '角色管理');
+
 -- 项目管理员权限
 INSERT INTO role_permissions (role_id, permission_id)
-SELECT 2, id FROM permissions WHERE module IN ('项目管理', '问题管理', '代码审核');
-
--- 开发人员权限
-INSERT INTO role_permissions (role_id, permission_id)
-SELECT 3, id FROM permissions WHERE code IN ('project:view', 'issue:view', 'issue:create', 'issue:edit', 'review:view', 'review:create');
-
--- 审核人员权限
-INSERT INTO role_permissions (role_id, permission_id)
-SELECT 4, id FROM permissions WHERE code IN ('project:view', 'issue:view', 'issue:create', 'issue:edit', 'review:view', 'review:edit');
+SELECT 3, id FROM permissions WHERE module IN ('项目管理', '问题管理', '代码审核');
 
 -- 普通用户权限
 INSERT INTO role_permissions (role_id, permission_id)
-SELECT 5, id FROM permissions WHERE code IN ('project:view', 'issue:view', 'review:view');
+SELECT 4, id FROM permissions WHERE code IN ('project:view', 'issue:view', 'review:view');
 
 -- 为admin用户分配管理员角色
 INSERT INTO user_roles (user_id, role_id) VALUES (1, 1);

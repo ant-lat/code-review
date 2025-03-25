@@ -1,22 +1,33 @@
+# 依赖目录
 node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# 构建输出
 dist
+build
+
+# 版本控制
 .git
-.github
 .gitignore
-.idea
+
+# 编辑器配置
 .vscode
-*.log
-*.log.*
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.DS_Store
+.idea
+*.swp
+*.swo
+
+# 环境文件
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
-Dockerfile
-.dockerignore
-docker-compose.yml
-README.md 
+.env.*.local
+
+# 测试文件
+__tests__
+*.test.js
+*.spec.js
+
+# 其他
+.DS_Store
+*.log 

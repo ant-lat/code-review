@@ -71,9 +71,10 @@ class LoginDialog(private val project: Project) : DialogWrapper(project) {
         // 用户名
         constraints.gridx = 0
         constraints.gridy = 0
-        formPanel.add(JBLabel("用户名:"), constraints)
+        formPanel.add(JBLabel("用户ID:"), constraints)
         
         constraints.gridx = 1
+        userField.toolTipText = "请输入用户ID"
         formPanel.add(userField, constraints)
         
         // 密码
@@ -94,6 +95,19 @@ class LoginDialog(private val project: Project) : DialogWrapper(project) {
         constraints.gridx = 1
         constraints.gridy = 2
         formPanel.add(autoLoginCheckBox, constraints)
+        
+        // 添加记住密码和自动登录的联动
+        rememberMeCheckBox.addActionListener {
+            if (!rememberMeCheckBox.isSelected) {
+                autoLoginCheckBox.isSelected = false
+            }
+        }
+        
+        autoLoginCheckBox.addActionListener {
+            if (autoLoginCheckBox.isSelected) {
+                rememberMeCheckBox.isSelected = true
+            }
+        }
         
         // 配置服务器链接
         constraints.gridx = 0
@@ -150,13 +164,18 @@ class LoginDialog(private val project: Project) : DialogWrapper(project) {
             userField.text = savedCredentials.first
             passwordField.text = savedCredentials.second
             rememberMeCheckBox.isSelected = true
-            autoLoginCheckBox.isSelected = true
-        } else {
-            // 检查是否有缓存的用户名
+            
+            // 检查是否设置了自动登录
             val appSettings = AppSettingsState.getInstance()
-            val cachedUsername = appSettings.loggedInUsername
-            if (cachedUsername.isNotBlank()) {
-                userField.text = cachedUsername
+            if (appSettings.autoLogin) {
+                autoLoginCheckBox.isSelected = true
+            }
+        } else {
+            // 检查是否有缓存的用户ID
+            val appSettings = AppSettingsState.getInstance()
+            val cachedUserId = appSettings.savedUsername
+            if (cachedUserId.isNotBlank()) {
+                userField.text = cachedUserId
             }
         }
         
@@ -164,15 +183,16 @@ class LoginDialog(private val project: Project) : DialogWrapper(project) {
     }
 
     override fun doOKAction() {
-        // 获取输入的用户名和密码
-        val username = userField.text.trim()
+        // 获取输入的用户ID和密码
+        val userId = userField.text.trim()
         val password = String(passwordField.password)
         val rememberMe = rememberMeCheckBox.isSelected
+        val autoLogin = autoLoginCheckBox.isSelected
         
-        if (username.isEmpty() || password.isEmpty()) {
+        if (userId.isEmpty() || password.isEmpty()) {
             com.intellij.openapi.ui.Messages.showErrorDialog(
                 contentPanel,
-                "用户名和密码不能为空",
+                "用户ID和密码不能为空",
                 "登录错误"
             )
             return
@@ -188,7 +208,7 @@ class LoginDialog(private val project: Project) : DialogWrapper(project) {
         com.intellij.openapi.application.ApplicationManager.getApplication().executeOnPooledThread {
             try {
                 val authService = AuthService.getInstance(project)
-                val success = authService.login(username, password, rememberMe)
+                val success = authService.login(userId, password, rememberMe)
                 
                 // 在EDT线程中更新UI
                 SwingUtilities.invokeLater {
@@ -198,11 +218,9 @@ class LoginDialog(private val project: Project) : DialogWrapper(project) {
                             println("[DEBUG] 登录成功，自动加载项目列表")
                             
                             // 保存自动登录设置
-                            if (rememberMe && autoLoginCheckBox.isSelected) {
-                                // 在设置中标记为自动登录
-                                val appSettings = AppSettingsState.getInstance()
-                                appSettings.loggedInUsername = username
-                            }
+                            val appSettings = AppSettingsState.getInstance()
+                            appSettings.savedUsername = userId  // 保存用户ID而不是用户名
+                            appSettings.autoLogin = autoLogin
                             
                             // 关闭对话框
                             close(OK_EXIT_CODE)
@@ -252,7 +270,7 @@ class LoginDialog(private val project: Project) : DialogWrapper(project) {
         // 未登录状态验证用户名和密码
         if (!isLoggedIn) {
             if (userField.text.isBlank()) {
-                return ValidationInfo("请输入用户名", userField)
+                return ValidationInfo("请输入用户ID", userField)
             }
             
             if (passwordField.password.isEmpty()) {
